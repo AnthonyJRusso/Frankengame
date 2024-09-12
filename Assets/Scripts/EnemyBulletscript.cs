@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bulletscript : MonoBehaviour
+public class EnemyBulletscript : MonoBehaviour
 {
-    //Credit to tutorial: https://youtu.be/-bkmPm_Besk?si=ltPoYMAlDX0LmVyZ
-
-    private Vector3 mousePos;
-    private Camera mainCam;
+    //Drag in player's position
+    //public Transform playerTransform;
+    private Vector3 playerPos;
     private Rigidbody2D rb;
     //Set bullet speed
     public float force;
@@ -15,11 +14,10 @@ public class Bulletscript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mainCam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+        playerPos = GameObject.FindGameObjectWithTag("Player").transform.position;
         rb = GetComponent<Rigidbody2D>();
-        mousePos = mainCam.ScreenToWorldPoint(Input.mousePosition);
-        Vector3 direction = mousePos - transform.position;
-        Vector3 rotation = transform.position - mousePos;
+        Vector3 direction = playerPos - transform.position;
+        Vector3 rotation = transform.position - playerPos;
         rb.velocity = new Vector2(direction.x, direction.y).normalized * force;
         float Zrotate = Mathf.Atan2(rotation.y, rotation.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, Zrotate + 90);
@@ -32,14 +30,12 @@ public class Bulletscript : MonoBehaviour
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
-    {   Wallscript w = collision.gameObject.GetComponent<Wallscript>();
-        EnemyLoss em  = collision.gameObject.GetComponent<EnemyLoss>();
+    {   
+        Wallscript w = collision.gameObject.GetComponent<Wallscript>();
         PlayerMovement pm = collision.gameObject.GetComponent<PlayerMovement>();
-
-        if(w || em || pm)
+        if(w || pm)
         {
             Destroy(gameObject);
         }
-        
     }
 }
